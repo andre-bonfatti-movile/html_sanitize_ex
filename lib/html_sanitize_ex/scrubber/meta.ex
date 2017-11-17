@@ -121,6 +121,36 @@ defmodule HtmlSanitizeEx.Scrubber.Meta do
   end
 
   @doc """
+  Ensures any tags not explicitly whitelisted until this
+  statement are stripped as well as attributes different than `style`
+  """
+  defmacro strip_everything_else_and_keep_inline_styles do
+    replacement_linebreak = "#{HtmlSanitizeEx.Parser.replacement_for_linebreak}"
+    replacement_space = "#{HtmlSanitizeEx.Parser.replacement_for_space}"
+    replacement_tab = "#{HtmlSanitizeEx.Parser.replacement_for_tab}"
+
+    quote do
+      def scrub_attribute(tag, {"style", _value} = attribute) do
+        {tag, attribute}
+      end
+      # If we haven't covered the attribute until here, we just scrab it.
+      def scrub_attribute(_tag, _attribute), do: nil
+
+      # If we haven't covered the attribute until here, we just scrab it.
+      def scrub({_tag, _attributes, children}), do: children
+
+      def scrub({_tag, children}), do: children
+
+      def scrub(unquote(" " <> replacement_linebreak <> " ") <> text), do: text
+      def scrub(unquote(" " <> replacement_space <> " ") <> text), do: " " <> text
+      def scrub(unquote(" " <> replacement_tab <> " ") <> text), do: text
+
+      # Text is left alone
+      def scrub("" <> text), do: text
+    end
+  end
+
+  @doc """
   Ensures any tags/attributes not explicitly whitelisted until this
   statement are stripped.
   """
