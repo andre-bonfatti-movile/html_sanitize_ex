@@ -199,6 +199,12 @@ defmodule HtmlSanitizeEx.Scrubber.HTML5 do
     {"style", scrub_attributes("style", attributes), [scrub_css(text)]}
   end
 
+  def scrub({any, attributes, children}) do
+    IO.puts "@@@@@@@ #{inspect(attributes)}"
+    {any, attributes, children}
+  end
+
+
   defp scrub_attributes("style", attributes) do
     Enum.map(attributes, fn(attr) -> scrub_attribute("style", attr) end)
     |> Enum.reject(&(is_nil(&1)))
