@@ -131,7 +131,7 @@ defmodule HtmlSanitizeEx.Scrubber.Meta do
 
     quote do
       def scrub_attribute(tag, {"style", _value} = attribute) do
-        {tag, attribute}
+        attribute
       end
       # If we haven't covered the attribute until here, we just scrab it.
       def scrub_attribute(_tag, _attribute), do: nil
